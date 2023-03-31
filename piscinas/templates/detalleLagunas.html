@@ -1,0 +1,78 @@
+{% extends 'layout.html' %}
+
+{% block contenido %}
+    <div class="container mb-3">
+        <div class="row">
+            <div class="col-12 mt-5">
+                <h1>{{laguna}}</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <td>Cantidad de aireadores disponibles</td>
+                                    <td><strong>9</strong></td>
+                                    <td>Sin observaciones</td>
+                                </tr>
+                                <tr>
+                                    <td>Aireadores funcinando</td>
+                                    <td><strong>3</strong></td>
+                                    <td>Sin observaciones</td>
+                                </tr>
+                                <tr>
+                                    <td>Niveles de oxigeno disuelto</td>
+                                    <td><strong>16,8</strong></td>
+                                    <td>
+                                        <span class="badge bg-success rounded-pill">
+                                            Optimo
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Niveles de ORP</td>
+                                    <td><strong>320</strong></td>
+                                    <td>
+                                        <span class="badge bg-warning rounded-pill">
+                                        Regular
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            {% for aireador in aireadores %}
+                <div class="col-12 col-md-4 mt-3">
+                    <div class="card">
+                        <h3 class="card-header">
+                            Aireador {{aireador.pk}}
+                        </h3>
+                        <div class="card-body">
+                            <h5>Potencia: {{aireador.potencia}}</h5>
+                            <h5>Consumo actual: {{aireador.consumoActual}}</h5>
+                            <h5>Ultima Pausa: {{aireador.fechaUltimaPausa}}</h5>
+                            <h5>Estado: 
+                                {% if aireador.isOn %}
+                                    <span class="badge bg-success rounded-pill">
+                                        Encendido
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-danger rounded-pill">
+                                        Apagado
+                                    </span>
+                                {% endif %}
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock contenido %}

@@ -1,0 +1,209 @@
+{% extends 'layout.html' %}
+
+{% block contenido %}
+<div class="container mb-5">
+    <div class="row">
+        <div class="col-12 mb-2 mt-5">
+            <h1>{{response.channel.name}}</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-lg-6 mb-2 mt-5">
+            <div class="card shadow h-100" style="width: 100%;">
+                <div class="card-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12">
+                                <h5 class="card-title text-center">AIREADOR 1</h5>
+                                <h6 class="card-subtitle mb-2 text-success text-center"><i>Activo</i></h6><br>
+                            </div>
+                        </div>
+                        {% with response.feeds|last as last %}
+                            <div class="row mt-5 mb-2">
+                                <div class="col-6">
+                                    <h5 class="card-text">Humedad: </h5>
+                                </div>
+                                <div class="col-6">
+                                    <h5 class="text-dark" style="text-align: right;">{{last.field1}}</h5>
+                                </div>
+                                <div class="col-6">
+                                    <h5 class="card-text">Temperatura: </h5>
+                                </div>
+                                <div class="col-6">
+                                    <h5 class="text-dark" style="text-align: right;">{{last.field2}}</h5>
+                                </div>
+                                <div class="col-6">
+                                    <h5 class="card-text">Indice de calor: </h5>
+                                </div>
+                                <div class="col-6">
+                                    <h5 class="text-dark" style="text-align: right;">{{last.field3}}</h5>
+                                </div>
+                                <div class="col-12 mt-5">
+                                    <a href="#" class="btn btn-success">Activar</a>
+                                    <a href="#" class="btn btn-danger" style="float: right;">Apagar</a>
+                                </div>
+                            </div>
+                        {% endwith %}
+                    </div>
+                </div>
+            </div>          
+        </div>
+        <div class="col-12 col-lg-6 mb-2 mt-5">
+            <div class="card shadow table-responsive"  style="width: 100%;">
+                <div class="card-header text-center bg-dark text-light">
+                    <h3>
+                        Datos {{response.channel.name}}
+                    </h3>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover table-striped m-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>id</th>
+                                <th>hora</th>
+                                <th>Humedad</th>
+                                <th>Temperatura</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for dato in response.feeds|slice:"-7:" %}
+                                <tr>
+                                    <td>{{dato.entry_id}}</td>
+                                    <td>{{dato.created_at|slice:":10"}} - {{dato.created_at|slice:"-9:-1"}}</td>
+                                    <td>{{dato.field1}}</td>
+                                    <td>{{dato.field2}}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mb-2 mt-5">
+            <div class="card shadow"  style="width: 100%;">
+                <div class="card-header text-center bg-dark text-light">
+                    <h3>
+                        Humedad
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="humedadChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mb-2 mt-5">
+            <div class="card shadow"  style="width: 100%;">
+                <div class="card-header text-center bg-dark text-light">
+                    <h3>
+                        Temperatura
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="temperaturaChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const ctx = document.getElementById('humedadChart');
+    const humedadChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{fechas|safe}},
+            datasets: [{
+                label: 'humedad',
+                data: {{humedad}},
+                backgroundColor: [
+                    'rgba(14, 142, 255, 0.2)',
+                ],
+                borderColor: [
+                    'rgba(14, 142, 255, 1)',
+                ],
+                borderWidth: 1
+            }],
+        },
+        options: {
+            plugins: {
+                legend: {
+                    display: false,
+                }
+            },
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'id'
+                    },
+                    ticks: {
+                        autoSkip: true,
+                        maxTicksLimit: 24,
+                        maxRotation: 90,
+                        minRotation: 90,
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'RH'
+                    },
+                }
+            }
+        }
+    });
+</script>
+<script>
+    const ctx2 = document.getElementById('temperaturaChart');
+    const temperaturaChart = new Chart(ctx2, {
+        type: 'line',
+        data: {
+            labels: {{ids|safe}},
+            datasets: [{
+                label: 'temperatura',
+                data: {{temperatura}},
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                ],
+                borderWidth: 1
+            }],
+        },
+        options: {
+            plugins: {
+                legend: {
+                    display: false,
+                }
+            },
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'id'
+                    },
+                    ticks: {
+                        autoSkip: true,
+                        maxTicksLimit: 24,
+                        maxRotation: 90,
+                        minRotation: 90,
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Celcius'
+                    },
+                }
+            }
+        }
+    });
+</script>
+{% endblock contenido %}
